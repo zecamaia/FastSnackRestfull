@@ -5,16 +5,20 @@ class UserController {
     async store(req, res) {
         try {
             const {username, email, password, role} = req.body;
+
+
+
             const hashedPassword = await bcrypt.hash(password, 10);
             const novoUsuario = await User.create({
                 username,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                role
             });
             return res.json({ username, email, role });
 
         } catch (error) {
-            console.error(error)
+            console.error("Erro ao tentar criar usuario",error)
             return res.status(500).json({erro: "Erro ao criar usuario"});
         }
     }
