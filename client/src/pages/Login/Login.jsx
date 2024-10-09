@@ -38,13 +38,18 @@ const Login = () => {
       });
       setIsLoading(false)
       console.log("fim request")
-      const {token, role} = response.data;
+      const token = response.data;
+      const msg = response.data.msg
       localStorage.setItem('token', token)
-
+      MySwal.fire({
+        icon: "success",
+        title: "Sucesso",
+        text: msg
+      });
       navigate('/eventos')
     } catch (error) {
       console.log(error)
-      setErro(error.response?.data?.erro || "Erro ao cadastrar");
+      setErro(error.response?.data?.erro || "Erro ao logar");
       MySwal.fire({
         icon: "error",
         title: "Erro",
@@ -102,8 +107,7 @@ const Login = () => {
                     />
                   </div>
                   <button type="submit"
-                          className="w-full text-white bg-orange-500 hover:bg-orange-700 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Crie
-                    sua conta
+                          className="w-full text-white bg-orange-500 hover:bg-orange-700 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Faça login
                   </button>
                   <p className="text-sm font-light text-gray-500 ">
                     Não possui uma conta? <span
