@@ -25,7 +25,7 @@ User.hasMany(Evento, {
 })
 
 
-sequelize.sync({ force: false })  // use 'force: false' para não recriar as tabelas
+sequelize.sync({ alter: true })  
     .then(() => {
         console.log("Banco de dados sincronizado com sucesso.");
     })

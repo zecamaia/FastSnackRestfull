@@ -3,9 +3,9 @@ const loginRequired = require('../middlewares/loginRequired');
 const EventoController = require('../controllers/EventoController');
 const router = express.Router();
 
-router.post("/", EventoController.store);
-// router.get("/",loginRequired, EventoController.index);
-// router.get("/:id", EventoController.show);
-// router.put("/:id", EventoController.update)
-// router.delete("/:id", EventoController.delete)
+router.post("/", loginRequired, EventoController.store);
+router.get("/", loginRequired, EventoController.index);
+router.get("/:id", loginRequired, EventoController.show);
+router.put("/:id", loginRequired, EventoController.update);
+router.delete("/:id", loginRequired, EventoController.delete);
 module.exports = router
