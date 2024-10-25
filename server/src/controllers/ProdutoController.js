@@ -4,14 +4,14 @@ class ProdutoController {
     async store(req, res) {
         try {
             const novoProduto = req.body;
-            const { nome, preco, quantidade, imagem, status, evento_id } = novoProduto;
+            const { nome, preco, quantidade, imagem, status, categoria_id } = novoProduto;
             const produto = await Produto.create({
                 nome,
                 preco,
                 quantidade,
                 imagem,
                 status,
-                evento_id
+                categoria_id
             });
             res.status(201).json({ produto });
         } catch (error) {
@@ -47,8 +47,8 @@ class ProdutoController {
                 return res.status(404).json({ erro: "Produto não encontrado" });
             }
             const novosDados = await produto.update(req.body);
-            const { nome, preco, quantidade, imagem, status, evento_id } = novosDados;
-            res.status(200).json({ nome, preco, quantidade, imagem, status, evento_id });
+            const { nome, preco, quantidade, imagem, status, categoria_id } = novosDados;
+            res.status(200).json({ nome, preco, quantidade, imagem, status, categoria_id });
         } catch (error) {
             console.log(error)
             res.status(500).json({ erro: "Erro ao editar o produto" });

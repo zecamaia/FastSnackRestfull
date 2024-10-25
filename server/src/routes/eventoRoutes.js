@@ -8,4 +8,4 @@ router.get("/", loginRequired, EventoController.index);
 router.get("/:id", loginRequired, EventoController.show);
 router.put("/:id", loginRequired, EventoController.update);
 router.delete("/:id", loginRequired, EventoController.delete);
-module.exports = router
+module.exports = router;

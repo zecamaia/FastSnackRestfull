@@ -5,6 +5,7 @@ const homeRoutes = require('./src/routes/homeRoutes');
 const tokenRoutes = require('./src/routes/tokenRoutes');
 const eventoRoutes = require('./src/routes/eventoRoutes');
 const produtoRoutes = require('./src/routes/produtoRoutes')
+const categoriaRoutes = require('./src/routes/categoriaRoutes');
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -14,4 +15,5 @@ app.use('/api/users', userRoutes);
 app.use('/api/token/', tokenRoutes);
 app.use('/api/eventos/', eventoRoutes);
 app.use('/api/produtos/', produtoRoutes);
+app.use('/api/categorias/', categoriaRoutes);
 module.exports = app;

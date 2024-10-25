@@ -3,15 +3,27 @@ const sequelize = require('./src/config/database');
 const User = require('./src/models/User');
 const Evento = require('./src/models/Evento');
 const Produto = require('./src/models/Produto');
+const Categoria = require('./src/models/Categoria');
 
-Produto.belongsTo(Evento, {
+
+Categoria.hasMany(Produto, {
+    foreignKey: 'categoria_id',
+    as: 'categoria'
+})
+
+Categoria.belongsTo(Evento, {
     foreignKey: 'evento_id',
     as: 'evento'
 });
 
-Evento.hasMany(Produto, {
+Produto.belongsTo(Categoria, {
+    foreignKey: 'categoria_id',
+    as: 'categoria'
+})
+
+Evento.hasMany(Categoria, {
     foreignKey: 'evento_id',
-    as: 'produtos'
+    as: 'categorias'
 });
 
 Evento.belongsTo(User, {
@@ -25,7 +37,7 @@ User.hasMany(Evento, {
 })
 
 
-sequelize.sync({ alter: true })  
+sequelize.sync({ force: true })
     .then(() => {
         console.log("Banco de dados sincronizado com sucesso.");
     })

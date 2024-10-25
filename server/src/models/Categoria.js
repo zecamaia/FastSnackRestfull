@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Produto = sequelize.define('Produto', {
+const Categoria = sequelize.define('Categoria', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -11,28 +11,15 @@ const Produto = sequelize.define('Produto', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    preco: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-    },
-    quantidade: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    imagem: {
+    descricao: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    status: {
-        type: DataTypes.ENUM('ativo', 'inativo'),
-        allowNull: false,
-        defaultValue: 'ativo'
-    },
-    categoria_id: {
+    evento_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Categoria',
+            model: 'Eventos',
             key: 'id'
         },
         onDelete: 'CASCADE',
@@ -42,4 +29,4 @@ const Produto = sequelize.define('Produto', {
     timestamps: true
 });
 
-module.exports = Produto;
+module.exports = Categoria;
