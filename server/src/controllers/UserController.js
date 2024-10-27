@@ -1,8 +1,8 @@
-const User = require('../models/User')
 const bcrypt = require('bcryptjs');
+const { User } = require('../../models');
 
 class UserController {
-    async store(req, res) {
+    async createUser(req, res) {
         try {
             const { username, email, password, role } = req.body;
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -20,7 +20,7 @@ class UserController {
         }
     }
 
-    async index(req, res) {
+    async getAllUsers(req, res) {
         try {
             const usuarios = await User.findAll({
                 attributes: ["id", "username", "email", "role"],
@@ -32,7 +32,7 @@ class UserController {
         }
     }
 
-    async show(req, res) {
+    async getUserById(req, res) {
         try {
             const usuario = await User.findByPk(req.params.id);
             if (!usuario) {
@@ -46,7 +46,7 @@ class UserController {
         }
     }
 
-    async update(req, res) {
+    async updateUser(req, res) {
         try {
             const usuario = await User.findByPk(req.params.id);
             if (!usuario) {
@@ -61,7 +61,7 @@ class UserController {
         }
     }
 
-    async delete(req, res) {
+    async deleteUser(req, res) {
         try {
             const usuario = await User.findByPk(req.params.id);
             if (!usuario) {
