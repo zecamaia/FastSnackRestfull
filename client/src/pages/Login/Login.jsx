@@ -1,8 +1,8 @@
-import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import axios from "axios";
+import axios from "../../../services/axios.js";
 import Spinner from "../../components/Spinner.jsx";
 
 const Login = () => {
@@ -32,7 +32,7 @@ const Login = () => {
     try {
       console.log("inicio request")
       setIsLoading(true)
-      const response = await axios.post('http://localhost:5000/api/token', {
+      const response = await axios.post('/api/token', {
         email: email,
         password: senha
       });
@@ -63,7 +63,7 @@ const Login = () => {
   }
 
   if (isLoading) {
-    return <Spinner/>
+    return <Spinner />
   }
 
   return (
@@ -83,18 +83,18 @@ const Login = () => {
                 <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
                   <div>
                     <label htmlFor="email"
-                           className="block mb-2 text-sm font-medium text-gray-900 ">Email:</label>
+                      className="block mb-2 text-sm font-medium text-gray-900 ">Email:</label>
                     <input type="email"
-                           value={email}
-                           onChange={(e) => setEmail(e.target.value)}
-                           name="email" id="email"
-                           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                           placeholder="seuemail@email.com"
-                           required=""/>
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      name="email" id="email"
+                      className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                      placeholder="seuemail@email.com"
+                      required="" />
                   </div>
                   <div>
                     <label htmlFor="password"
-                           className="block mb-2 text-sm font-medium text-gray-900">Senha:</label>
+                      className="block mb-2 text-sm font-medium text-gray-900">Senha:</label>
                     <input
                       type="password"
                       value={senha}
@@ -107,12 +107,12 @@ const Login = () => {
                     />
                   </div>
                   <button type="submit"
-                          className="w-full text-white bg-orange-500 hover:bg-orange-700 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Faça login
+                    className="w-full text-white bg-red-600 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Faça login
                   </button>
                   <p className="text-sm font-light text-gray-500 ">
                     Não possui uma conta? <span
-                    className="font-medium text-primary-600 hover:underline hover:text-orange-400"><Link
-                    to='/cadastrar'>Cadastre-se</Link></span>
+                      className="font-medium text-primary-600 hover:underline hover:text-red-500"><Link
+                        to='/cadastrar'>Cadastre-se</Link></span>
                   </p>
                 </form>
               </div>
