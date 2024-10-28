@@ -3,8 +3,8 @@ const { Event } = require('../../models');
 class EventController {
     async createEvent(req, res) {
         try {
-            const newEvent = req.body
-            const { name, user_id, start_date, end_date, image, status } = newEvent;
+            const newEvent = req.body;
+            const { name, user_id, start_date, end_date, image, description, location, status } = newEvent;
             console.log(newEvent)
             const event = await Event.create({
                 name,
@@ -12,6 +12,8 @@ class EventController {
                 start_date,
                 end_date,
                 image,
+                description,
+                location,
                 status,
             });
             return res.status(201).json({ status: 200, event });
@@ -22,7 +24,11 @@ class EventController {
     }
     async getAllEvents(req, res) {
         try {
-            const events = await Event.findAll();
+            const events = await Event.findAll({
+                order: [
+                    ['id', 'DESC']
+                ]
+            });
             res.status(200).json(events)
         } catch (error) {
             console.log(error);
