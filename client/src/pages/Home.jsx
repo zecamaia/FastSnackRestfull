@@ -6,12 +6,17 @@ import { useEffect, useState } from 'react';
 import axios from '../../services/axios';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
+import { useAuth } from '../context/AuthContext';
 const mySwal = withReactContent(Swal);
 
 const Home = () => {
 
+
+  const { logout, isLoggedIn, loading } = useAuth();
   const [eventos, setEventos] = useState([]);
   const ultimosEventos = eventos.slice(0, 4);
+
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -27,8 +32,22 @@ const Home = () => {
       }
     }
     fetchEvents();
-  }, [])
+  }, []);
 
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    const result = await mySwal.fire({
+      title: "Você tem certeza?",
+      text: "Deseja mesmo deslogar?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#820AD1',
+      confirmButtonText: 'Sim, desejo sair!'
+    });
+    if (result.isConfirmed) {
+      logout()
+    }
+  }
 
   return (
     <div className="bg-gray-50">
@@ -36,14 +55,27 @@ const Home = () => {
         <div className="">
           <h1 className="text-4xl font-bold ">FastSnack</h1>
         </div>
-        <div className=''>
-          <Link
-            to='/cadastrar'
-            className='font-medium hover:text-red-500 transition duration-300 ease-out'>Criar conta</Link>
-          <Link
-            to='/login'
-            className='mx-3 bg-red-600 py-2 px-4 rounded-lg text-white font-medium hover:bg-red-500 transition duration-300 ease-in-out shadow-md'>Entrar</Link>
-        </div>
+        {isLoggedIn ? (
+          <div className=''>
+            <Link
+              onClick={handleLogout}
+              to='/'
+              className='font-medium hover:text-red-500 transition duration-300 ease-out'>Sair</Link>
+            <Link
+              to='/eventos'
+              className='mx-3 bg-red-600 py-2 px-4 rounded-lg text-white font-medium hover:bg-red-500 transition duration-300 ease-in-out shadow-md'>Entrar</Link>
+          </div>
+        ) : (
+          <div className=''>
+            <Link
+              to='/cadastrar'
+              className='font-medium hover:text-red-500 transition duration-300 ease-out'>Criar conta</Link>
+            <Link
+              to='/login'
+              className='mx-3 bg-red-600 py-2 px-4 rounded-lg text-white font-medium hover:bg-red-500 transition duration-300 ease-in-out shadow-md'>Login</Link>
+          </div>
+        )}
+
       </header>
 
       <section className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center font-poppins z-1" style={{ backgroundImage: `url(${backgroundImage})` }}>

@@ -4,6 +4,7 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import axios from "../../../services/axios.js";
 import Spinner from "../../components/Spinner.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const Login = () => {
 
@@ -12,8 +13,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [erro, setErro] = useState('')
   const MySwal = withReactContent(Swal)
-  const navigate = useNavigate()
-
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,21 +31,28 @@ const Login = () => {
 
     if (formErros) return;
     try {
-      console.log("inicio request")
       setIsLoading(true)
       const response = await axios.post('/api/token', {
         email: email,
         password: senha
       });
       setIsLoading(false)
-      console.log("fim request")
-      const token = response.data;
-      const msg = response.data.msg
-      localStorage.setItem('token', token)
+
+      const token = response.data.token;
+      const userData = {
+        nome: response.data.user.nome,
+        email: response.data.user.email,
+        role: response.data.user.role
+      };
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('userData', JSON.stringify(userData));
+      login(token, userData);
+
       MySwal.fire({
         icon: "success",
         title: "Sucesso",
-        text: msg
+        text: response.data.msg
       });
       navigate('/eventos')
     } catch (error) {
