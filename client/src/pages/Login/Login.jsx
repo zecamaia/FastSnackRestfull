@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import axios from "../../../services/axios.js";
 import Spinner from "../../components/Spinner.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { showErrorAlert, showSuccesAlert, showValidationAlert } from "../../components/Dialog.jsx";
 
 const Login = () => {
 
@@ -22,11 +23,7 @@ const Login = () => {
 
     if (email.length === 0 || senha.length === 0) {
       formErros = true;
-      MySwal.fire({
-        icon: "error",
-        title: "Campos vazios",
-        text: "Preencha os campos."
-      })
+      showValidationAlert("Por favor, preencha o campo antes de enviar")
     }
 
     if (formErros) return;
@@ -48,24 +45,15 @@ const Login = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('userData', JSON.stringify(userData));
       login(token, userData);
-
-      MySwal.fire({
-        icon: "success",
-        title: "Sucesso",
-        text: response.data.msg
-      });
+      showSuccesAlert(response.data.msg)
       navigate('/eventos')
     } catch (error) {
       console.log(error)
-      setErro(error.response?.data?.erro || "Erro ao logar");
-      MySwal.fire({
-        icon: "error",
-        title: "Erro",
-        text: erro
-      })
-      setIsLoading(false)
+      setErro(error.response?.data?.error || "Erro ao logar");
+      showErrorAlert(erro);
+      setIsLoading(false);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
 
   }

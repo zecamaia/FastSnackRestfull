@@ -1,9 +1,8 @@
 import { useState } from "react";
-import api from "../../../services/axios.js";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import isEmail from "validator/es/lib/isEmail.js";
+import api from "../../../services/axios.js";
+import { showErrorAlert, showSuccesAlert, showValidationAlert } from "../../components/Dialog.jsx";
 import Spinner from "../../components/Spinner.jsx";
 
 const Registro = () => {
@@ -15,43 +14,28 @@ const Registro = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
-  const MySwal = withReactContent(Swal)
 
   const handleRegister = async (e) => {
     e.preventDefault();
     let formErros = false;
     if (nome.length === 0 || email.length === 0 || senha.length === 0 || confirmarSenha.length === 0) {
       formErros = true
-      MySwal.fire({
-        icon: "error",
-        title: "Campos vazios",
-        text: "Preencha os campos."
-      });
+      showValidationAlert("Por favor, preencha o campo antes de enviar")
     }
+    
     if (nome.length < 3) {
       formErros = true;
-      MySwal.fire({
-        icon: 'error',
-        title: "Nome inválido",
-        text: "Nome precisa ter mais de 3 caracteres."
-      });
+      showValidationAlert("Nome precisa ter mais de 3 caracteres")
     }
+    
     if (!isEmail(email)) {
       formErros = true;
-      MySwal.fire({
-        icon: 'error',
-        title: "Email inválido",
-        text: "Insira um email válido."
-      });
+      showValidationAlert("Email inválido")
     }
 
     if (senha !== confirmarSenha) {
       formErros = true;
-      MySwal.fire({
-        icon: 'error',
-        title: "Senha inválida",
-        text: "Senhas não coincidem"
-      });
+      showValidationAlert("Senhas não coincidem")
     }
     if (formErros) return;
     try {
@@ -62,19 +46,11 @@ const Registro = () => {
         password: senha
       });
       setIsLoading(false)
-      Swal.fire({
-        icon: "success",
-        title: "Sucesso",
-        text: "Usuário criado com sucesso."
-      });
+      showSuccesAlert("Usuário cadastrado com sucesso");
       navigate('/login');
     } catch (error) {
       setErro(error.response?.data?.erro || "Erro ao cadastrar");
-      MySwal.fire({
-        icon: "error",
-        title: "Erro",
-        text: erro
-      })
+      showErrorAlert(erro)
       setIsLoading(false)
     }
   }
