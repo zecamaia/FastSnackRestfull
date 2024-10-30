@@ -32,10 +32,12 @@ export const AuthProvider = ({ children }) => {
     }
 
     const logout = () => {
+        setLoading(true)
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setIsLoggedIn(false);
         setUser(null);
+        setLoading(false)
     }
 
     return (

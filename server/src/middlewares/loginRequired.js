@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../../models/user');
 
 module.exports = async (req, res, next) => {
     const { authorization } = req.headers;
@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
 
         const user = await User.findByPk(id);
 
-        if(!user) {
+        if (!user) {
             return res.status(401).json({
                 error: "Usuario inválido ou nao encontrado."
             });
@@ -26,7 +26,7 @@ module.exports = async (req, res, next) => {
         req.userRole = role
         console.log("autorizacao sucesso")
         next()
-    } catch(error) {
+    } catch (error) {
         console.log("Erro de autenticação:", error.message);
 
         return res.status(401).json({

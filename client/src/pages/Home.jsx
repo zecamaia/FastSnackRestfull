@@ -4,13 +4,14 @@ import { format } from 'date-fns'
 import backgroundImage from '../assets/desktop-background.png'
 import { useEffect, useState } from 'react';
 import axios from '../../services/axios';
-import withReactContent from 'sweetalert2-react-content';
-import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
-const mySwal = withReactContent(Swal);
+import { showConfirmAlert, showErrorAlert } from '../components/Dialog';
+import Navbar from '../components/Navbar';
+
+
+// TODO: ADICIONAR UM BOTAO DE CRIE SEU EVENTO (PARA PRODUTORES)
 
 const Home = () => {
-
 
   const { logout, isLoggedIn, loading } = useAuth();
   const [eventos, setEventos] = useState([]);
@@ -22,13 +23,8 @@ const Home = () => {
       try {
         const response = await axios.get('/api/eventos/')
         setEventos(response.data);
-        console.log(response)
       } catch (error) {
-        mySwal.fire({
-          title: 'Erro ao carregar os eventos.',
-          text: error.message,
-          icon: 'error'
-        })
+        showErrorAlert(error.message);
       }
     }
     fetchEvents();
@@ -36,48 +32,22 @@ const Home = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    const result = await mySwal.fire({
-      title: "Você tem certeza?",
-      text: "Deseja mesmo deslogar?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#820AD1',
-      confirmButtonText: 'Sim, desejo sair!'
+
+    showConfirmAlert({
+      text: "Deseja mesmo sair?",
+      confirmButtonText: "Sim, sair",
+      cancelButtonText: "Não, cancelar",
+      onConfirm: () => {
+        logout()
+      }
     });
-    if (result.isConfirmed) {
-      logout()
-    }
   }
 
   return (
     <div className="bg-gray-50">
-      <header className="flex items-center fixed top-0 left-0 right-0 z-10 bg-gray-100 text-red-600 p-6 justify-around shadow-sm font-montserrat">
-        <div className="">
-          <h1 className="text-4xl font-bold ">FastSnack</h1>
-        </div>
-        {isLoggedIn ? (
-          <div className=''>
-            <Link
-              onClick={handleLogout}
-              to='/'
-              className='font-medium hover:text-red-500 transition duration-300 ease-out'>Sair</Link>
-            <Link
-              to='/eventos'
-              className='mx-3 bg-red-600 py-2 px-4 rounded-lg text-white font-medium hover:bg-red-500 transition duration-300 ease-in-out shadow-md'>Entrar</Link>
-          </div>
-        ) : (
-          <div className=''>
-            <Link
-              to='/cadastrar'
-              className='font-medium hover:text-red-500 transition duration-300 ease-out'>Criar conta</Link>
-            <Link
-              to='/login'
-              className='mx-3 bg-red-600 py-2 px-4 rounded-lg text-white font-medium hover:bg-red-500 transition duration-300 ease-in-out shadow-md'>Login</Link>
-          </div>
-        )}
+      <Navbar handleLogout={handleLogout} isLoggedIn={isLoggedIn} />
 
-      </header>
-
+    
       <section className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center font-poppins z-1" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <h2 className="text-5xl font-bold text-center sm:text-5xl md:text-6xl ">Bem-vindo ao FastSnack</h2>
         <p className="text-lg mt-4 max-w-lg text-center sm:text-xl md:max-w-2xl ">

@@ -15,11 +15,11 @@ const showDialog = ({
         type,
         icon,
         title,
-        text, 
+        text,
         confirmButtonText,
-        onConfirm    
+        onConfirm
     }).then((result) => {
-        if(result.isConfirmed && onConfirm) {
+        if (result.isConfirmed && onConfirm) {
             onConfirm();
         }
     });
@@ -52,5 +52,29 @@ export const showErrorAlert = (message) => {
         confirmButtonText: 'Tentar Novamente',
     });
 }
+
+export const showConfirmAlert = ({
+    title = 'Tem certeza?',
+    text = 'Essa ação não pode ser desfeita!',
+    confirmButtonText = 'Confirmar',
+    cancelButtonText = 'Cancelar',
+    onConfirm = null,
+    showCancelButton = true
+}) => {
+    return mySwal.fire({
+        title,
+        text,
+        icon: 'warning',
+        showCancelButton,
+        confirmButtonText,
+        cancelButtonText
+    }).then((result) => {
+        if (result.isConfirmed && onConfirm) {
+            onConfirm()
+        }
+    })
+}
+
+
 
 

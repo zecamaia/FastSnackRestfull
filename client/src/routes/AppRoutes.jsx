@@ -4,7 +4,7 @@ import Registro from "../pages/Registro/Registro";
 import Login from "../pages/Login/Login";
 import Layout from "../layout/Layout";
 import ProtectedRoute from "./ProtectedRoute";
-import Evento from "../pages/Evento/Evento";
+import Evento from "../pages/Guest/Evento";
 
 const AppRoutes = () => {
     return (
