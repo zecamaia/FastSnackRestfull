@@ -3,7 +3,7 @@ import { BsArrowRight } from "react-icons/bs";
 import { format } from 'date-fns'
 import backgroundImage from '../assets/desktop-background.png'
 import { useEffect, useState } from 'react';
-import axios from '../../services/axios';
+import api from '../../services/axios';
 import { useAuth } from '../context/AuthContext';
 import { showConfirmAlert, showErrorAlert } from '../components/Dialog';
 import Navbar from '../components/Navbar';
@@ -21,7 +21,7 @@ const Home = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('/api/eventos/')
+        const response = await api.get('/api/eventos/')
         setEventos(response.data);
       } catch (error) {
         showErrorAlert(error.message);
@@ -47,7 +47,7 @@ const Home = () => {
     <div className="bg-gray-50">
       <Navbar handleLogout={handleLogout} isLoggedIn={isLoggedIn} />
 
-    
+
       <section className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center font-poppins z-1" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <h2 className="text-5xl font-bold text-center sm:text-5xl md:text-6xl ">Bem-vindo ao FastSnack</h2>
         <p className="text-lg mt-4 max-w-lg text-center sm:text-xl md:max-w-2xl ">

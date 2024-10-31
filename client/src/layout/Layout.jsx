@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Spinner from '../components/Spinner';
 import { showConfirmAlert } from '../components/Dialog';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function Layout() {
 
@@ -36,10 +37,10 @@ export default function Layout() {
             <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
             <div className="flex flex-1">
                 <main className="flex-1 p-4 bg-white">
-                    {/* renderiza o Outlet apenas se o usuário estiver logado */}
                     {isLoggedIn ? <Outlet /> : null}
                 </main>
             </div>
+            <Footer />
         </div>
     )
 }
