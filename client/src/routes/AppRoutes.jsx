@@ -5,6 +5,7 @@ import Login from "../pages/Login/Login";
 import Layout from "../layout/Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import Evento from "../pages/Guest/Evento";
+import EventCategory from "../pages/Guest/CategoriaEvento";
 
 const AppRoutes = () => {
     return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
             {/* Rotas protegidas */}
             <Route element={<Layout />}>
                 <Route path="/eventos" element={<ProtectedRoute element={<Evento />} />} />
+                <Route path="/eventos/categoria/:id" element={<ProtectedRoute element={<EventCategory />} />} />
             </Route>
         </Routes>
     )

@@ -8,22 +8,33 @@ import { showErrorAlert } from "../../components/Dialog";
 
 const Evento = () => {
     const [events, setEvents] = useState([]);
-
+    const [categories, setCategories] = useState([]);
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 const response = await api.get('api/eventos')
                 setEvents(response.data);
-                console.log(events);
+                console.log("events", events);
+            } catch (error) {
+                showErrorAlert(error.message)
+            }
+        }
+        const fetchCategories = async () => {
+            try {
+                const response = await api.get('api/categoria-eventos')
+                setCategories(response.data);
+                console.log("categories", categories);
             } catch (error) {
                 showErrorAlert(error.message)
             }
         }
         fetchEvents();
+        fetchCategories();
     }, []);
     return (
         <div className="max-w-screen-lg mx-auto p-4 mt-36">
-            <h2 className="text-3xl text-primary font-bold text-center sm:text-3xl md:text-3xl">Os melhores eventos você encontra aqui!</h2>            <Categories />
+            <h2 className="text-3xl text-primary font-bold text-center sm:text-3xl md:text-3xl">Os melhores eventos você encontra aqui!</h2>
+            <Categories categories={categories} />
             <Slider />
             <ListEvents events={events} />
         </div>
