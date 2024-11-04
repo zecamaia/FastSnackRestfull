@@ -6,6 +6,6 @@ const router = express.Router();
 router.post("/", loginRequired, EventController.createEvent);
 router.get("/", EventController.getAllEvents);
 router.get("/:id", EventController.getEventById);
-router.put("/:id", loginRequired, EventController.updateEvent);
+router.put("/:id", EventController.updateEvent);
 router.delete("/:id", loginRequired, EventController.deleteEvent);
 module.exports = router;
