@@ -3,7 +3,7 @@ const loginRequired = require('../middlewares/loginRequired');
 const EventController = require('../controllers/EventController');
 const router = express.Router();
 
-router.post("/", loginRequired, EventController.createEvent);
+router.post("/", EventController.createEvent);
 router.get("/", EventController.getAllEvents);
 router.get("/:id", EventController.getEventById);
 router.put("/:id", EventController.updateEvent);
