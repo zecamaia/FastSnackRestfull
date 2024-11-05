@@ -1,4 +1,4 @@
-const { Event } = require('../../models');
+const { Event, Ticket } = require('../../models');
 
 class EventController {
     async createEvent(req, res) {
@@ -38,7 +38,9 @@ class EventController {
     }
     async getEventById(req, res) {
         try {
-            const event = await Event.findByPk(req.params.id);
+            const event = await Event.findByPk(req.params.id, {
+                include: { model: Ticket, as: 'ticket' }
+            });
             if (!event) {
                 return res.status(404).json({ erro: "Evento não encontrado." });
             }
