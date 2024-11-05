@@ -36,7 +36,7 @@ export default function Layout() {
         <div className="flex flex-col min-h-screen">
             <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
             <div className="flex flex-1">
-                <main className="flex-1 p-4 bg-white">
+                <main className="flex-1  bg-white">
                     {isLoggedIn ? <Outlet /> : null}
                 </main>
             </div>
