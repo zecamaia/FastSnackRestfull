@@ -48,7 +48,6 @@ const Login = () => {
       showSuccesAlert(response.data.msg)
       navigate('/eventos')
     } catch (error) {
-      console.log(error)
       setErro(error.response?.data?.error || "Erro ao logar");
       showErrorAlert(erro);
       setIsLoading(false);

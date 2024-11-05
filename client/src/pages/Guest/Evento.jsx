@@ -14,7 +14,6 @@ const Evento = () => {
             try {
                 const response = await api.get('api/eventos')
                 setEvents(response.data);
-                console.log("events", events);
             } catch (error) {
                 showErrorAlert(error.message)
             }
@@ -23,7 +22,6 @@ const Evento = () => {
             try {
                 const response = await api.get('api/categoria-eventos')
                 setCategories(response.data);
-                console.log("categories", categories);
             } catch (error) {
                 showErrorAlert(error.message)
             }

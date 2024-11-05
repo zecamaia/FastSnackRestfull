@@ -15,7 +15,6 @@ const EventCategory = () => {
         const fetchEventsByCategory = async () => {
             setIsLoading(true)
             try {
-                console.log(id);
                 const response = await api.get(`api/categoria-eventos/${id}`);
                 setEvents(response.data.categoriaEvento);
                 setCategoryName(response.data.name)

@@ -15,8 +15,6 @@ const ListEvents = ({ events }) => {
             {events.map((event) => (
                 <div key={event.id} className='bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-lg'>
                     <Link to={`/eventos/${event.id}`} >
-
-
                         <img
                             src={event.image}
                             alt="imagem_evento"
