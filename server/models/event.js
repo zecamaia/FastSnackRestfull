@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       Event.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
       Event.hasMany(models.Category, { foreignKey: 'event_id', as: 'category' })
       Event.belongsTo(models.EventCategory, { foreignKey: 'event_category_id', as: 'eventCategory' });
+      Event.hasMany(models.Ticket, { foreignKey: 'event_id', as: 'ticket' })
     }
   }
   Event.init({
