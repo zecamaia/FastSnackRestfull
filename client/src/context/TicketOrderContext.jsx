@@ -1,11 +1,24 @@
-import React from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
 
-const TicketOrderContext = () => {
+const TicketOrderContext = createContext();
+export const TicketOrderProvider = ({ children }) => {
+    const savedOrders = JSON.parse(localStorage.getItem("ticketOrders")) || [];
+    const [ticketOrders, setOrderTickets] = useState([]);
+
+    const addTicketOrder = (ticket) => {
+        setOrderTickets((prevOrders) => [...prevOrders, ticket]);
+    };
+    const removeTicketOrder = (ticketId) => {
+        setOrderTickets((prevOrders) =>
+            prevOrders.filter((order) => order.ticket_id !== ticketId)
+        );
+    }
     return (
-        <div>
-
-        </div>
-    );
+        <TicketOrderContext.Provider value={{ ticketOrders, addTicketOrder, removeTicketOrder }}>
+            {children}
+        </TicketOrderContext.Provider>
+    )
 }
-
-export default TicketOrderContext;
+export const useTicketOrderContext = () => {
+    return useContext(TicketOrderContext);
+};

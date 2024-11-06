@@ -18,7 +18,9 @@ class OrderTicketController {
             await ticket.save();
             res.status(201).json({ order });
         } catch (error) {
+            console.error(error)
             return res.status(500).json({ error: 'Erro ao criar pedido. Tente novamente.' })
+
         }
     }
     async updateOrderStatus(req, res) {
@@ -37,7 +39,12 @@ class OrderTicketController {
             const { user_id } = req.params;
             const orders = await OrderTicket.findAll({
                 where: { user_id },
-                include: [{ model: Ticket }],
+                include: [
+                    {
+                        model: Ticket,
+                        as: 'ticket'
+                    }
+                ],
             });
             return res.status(200).json(orders)
         } catch (error) {

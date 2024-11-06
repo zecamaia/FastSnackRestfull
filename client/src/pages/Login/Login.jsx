@@ -37,6 +37,7 @@ const Login = () => {
 
       const token = response.data.token;
       const userData = {
+        id: response.data.user.id,
         nome: response.data.user.nome,
         email: response.data.user.email,
         role: response.data.user.role

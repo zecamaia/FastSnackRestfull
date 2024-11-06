@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import api from '../../../services/axios';
 import { showErrorAlert } from '../../components/Dialog';
 import { format } from 'date-fns';
+import { useTicketOrderContext } from '../../context/TicketOrderContext';
 
 const EventInfo = () => {
+
     const { id } = useParams();
     const [event, setEvent] = useState({});
     const [tickets, setTickets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [quantities, setQuantities] = useState({});
+    const navigate = useNavigate();
+    const { addTicketOrder } = useTicketOrderContext();
 
     useEffect(() => {
         const fetchEventById = async () => {
@@ -40,6 +44,22 @@ const EventInfo = () => {
         }));
     };
 
+    const handleBuyTickets = (ticketId) => {
+        const selectedTicket = tickets.find(ticket => ticket.id === ticketId)
+        const quantity = quantities[ticketId];
+
+        if (quantity > 0) {
+            const orderTicket = {
+                ticket_id: selectedTicket.id,
+                quantity: quantity,
+                price: selectedTicket.price
+            }
+            addTicketOrder(orderTicket);
+            navigate('/checkout/ingresso');
+        } else {
+            showErrorAlert("Selecione pelo menos um ingresso");
+        }
+    }
 
     return (
         <div>
