@@ -9,6 +9,7 @@ import EventCategory from "../pages/Guest/CategoriaEvento";
 import EventInfo from "../pages/Guest/EventoInfo";
 import { TicketOrderProvider } from "../context/TicketOrderContext";
 import TicketCheckout from "../pages/TicketCheckout";
+import Ingresso from "../pages/Guest/Ingresso";
 
 const AppRoutes = () => {
     return (
@@ -25,6 +26,7 @@ const AppRoutes = () => {
                     <Route path="/eventos/categoria/:id" element={<ProtectedRoute element={<EventCategory />} />} />
                     <Route path="/eventos/:id" element={<ProtectedRoute element={<EventInfo />} />} />
                     <Route path="/checkout/ingresso" element={<ProtectedRoute element={<TicketCheckout />} />} />
+                    <Route path="/ingressos/" element={<ProtectedRoute element={<Ingresso />} />} />
                 </Route>
             </Routes>
         </TicketOrderProvider>
