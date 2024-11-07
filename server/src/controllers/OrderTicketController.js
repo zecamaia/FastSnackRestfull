@@ -1,4 +1,4 @@
-const { OrderTicket, Ticket, User } = require('../../models');
+const { OrderTicket, Ticket, User, Event } = require('../../models');
 
 class OrderTicketController {
     async createOrder(req, res) {
@@ -42,8 +42,14 @@ class OrderTicketController {
                 include: [
                     {
                         model: Ticket,
-                        as: 'ticket'
-                    }
+                        as: 'ticket',
+                        include: [
+                            {
+                                model: Event,
+                                as: 'event'
+                            }
+                        ]
+                    },
                 ],
             });
             return res.status(200).json(orders)
