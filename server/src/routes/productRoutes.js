@@ -3,9 +3,12 @@ const loginRequired = require('../middlewares/loginRequired');
 const ProductController = require('../controllers/ProductController');
 const router = express.Router();
 
-router.post("/", loginRequired, ProductController.createProduct);
-router.get("/", loginRequired, ProductController.getAllProducts);
-router.get("/:id", loginRequired, ProductController.getProductById);
-router.put("/:id", loginRequired, ProductController.updateProduct);
-router.delete("/:id", loginRequired, ProductController.deleteProduct);
+
+router.post("/", ProductController.createProduct);
+router.get("/", ProductController.getAllProducts);
+router.get("/:id", ProductController.getProductById);
+router.put("/:id", ProductController.updateProduct);
+router.delete("/:id", ProductController.deleteProduct);
+
+// router.get("/")
 module.exports = router

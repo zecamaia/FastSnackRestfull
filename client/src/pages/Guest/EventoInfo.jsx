@@ -12,6 +12,8 @@ const EventInfo = () => {
     const [tickets, setTickets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [quantities, setQuantities] = useState({});
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
     const { addTicketOrder } = useTicketOrderContext();
 
@@ -34,8 +36,18 @@ const EventInfo = () => {
                 setIsLoading(false)
             }
         }
+
+        const fetchCategoriesAndProducts = async () => {
+            const response = await api.get(`/api/categorias/evento/${id}`)
+            setCategories(response.data);
+        }
+        fetchCategoriesAndProducts()
         fetchEventById();
     }, [id])
+
+    const handleCategoryChange = (event) => {
+        setSelectedCategory(Number(event.target.value));
+    };
 
     const handleQuantityChange = (ticketId, change) => {
         setQuantities(prevQuantities => ({
@@ -69,6 +81,7 @@ const EventInfo = () => {
             </div>
 
             <div className="max-w-screen-lg mx-auto p-4 mt-8 mb-16 md:mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Primeira coluna (Descrição e Tickets) */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                     <h2 className="text-2xl font-bold">{event.title}</h2>
                     <p className="mt-4 text-lg">{event.description}</p>
@@ -78,7 +91,8 @@ const EventInfo = () => {
                     <p className="text-gray-600">Local: {event.location}</p>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-lg p-4 w-full">
+                {/* Segunda coluna (Produtos) */}
+                <div className="bg-white rounded-lg shadow-lg p-4">
                     <h3 className="text-lg font-bold mb-2">Escolha seus ingressos:</h3>
                     <div className="bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
                         {tickets.map((ticket) => (
@@ -116,6 +130,49 @@ const EventInfo = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-screen-lg mx-auto p-4 mt-8 mb-16 md:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                    <h3 className="text-2xl font-bold mb-4 text-center">Categorias do Evento:</h3>
+
+                    {/* Select para escolher a categoria */}
+                    <div className="mb-6">
+                        <label htmlFor="categorySelect" className="text-lg font-semibold text-gray-700">Escolha uma categoria:</label>
+                        <select
+                            id="categorySelect"
+                            value={selectedCategory || ''}
+                            onChange={handleCategoryChange}
+                            className="w-full mt-2 p-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-gray-700 focus:outline-none "
+                        >
+                            <option value="" disabled>Selecione uma categoria</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id} className='bg-gray-100 hover:bg-gray-200 hover:text-gray-800'>
+                                    {category.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Listar produtos da categoria selecionada */}
+                    <div>
+                        <h3 className="text-lg font-bold mb-4">Produtos Disponíveis:</h3>
+                        {selectedCategory ? (
+                            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                                {categories
+                                    .find(category => category.id === selectedCategory)
+                                    ?.produto.map((product) => (
+                                        <div key={product.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                            <p className="text-sm font-semibold">{product.name}</p>
+                                            <p className="text-sm text-red-600">R${product.price.toFixed(2)}</p>
+                                        </div>
+                                    ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-600">Selecione uma categoria para ver os produtos.</p>
+                        )}
                     </div>
                 </div>
             </div>

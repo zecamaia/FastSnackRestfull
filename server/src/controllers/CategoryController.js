@@ -38,9 +38,12 @@ class CategoryController {
         }
     }
 
-    async getAllCategoriesAndProducts(req, res) {
+
+    async getAllCategoriesAndProductsByEvent(req, res) {
+        const { eventId } = req.params
         try {
             const categories = await Category.findAll({
+                where: { event_id: eventId },
                 include: [
                     {
                         model: Product,
