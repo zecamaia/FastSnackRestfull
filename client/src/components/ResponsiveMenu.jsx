@@ -2,11 +2,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import React from 'react';
 import { filterMenuItens } from './Navbar';
 import { NavbarMenu } from '../mocks/data';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PiShoppingCartThin } from 'react-icons/pi';
 
 const ResponsiveMenu = ({ open, isLoggedIn, handleLogout }) => {
     const filteredNavbarMenu = filterMenuItens(NavbarMenu, isLoggedIn)
+    const navigate = useNavigate();
+
+    const handleNavigate = () => {
+        navigate('/checkout'); // Substitua '/carrinho' pela rota desejada
+    };
     return (
         <AnimatePresence mode='wait'>
             {
@@ -33,6 +38,11 @@ const ResponsiveMenu = ({ open, isLoggedIn, handleLogout }) => {
                                         className='px-4 py-2 bg-red-500 text-white rounded-md'>
                                         Logout
                                     </button>
+                                    <button
+                                        onClick={handleNavigate}
+                                        className='px-4 py-2 bg-red-500 text-white rounded-md'>
+                                        Meu carrinho
+                                    </button>
                                 </div>
                             ) : (
                                 <div className='flex flex-col items-center gap-6 mt-8'>
@@ -42,7 +52,6 @@ const ResponsiveMenu = ({ open, isLoggedIn, handleLogout }) => {
                                         Login
                                     </Link>
 
-                                    {/* Link de cadastro */}
                                     <Link
                                         to='/cadastrar'
                                         className='px-4 py-2 bg-red-500 text-white rounded-md'>

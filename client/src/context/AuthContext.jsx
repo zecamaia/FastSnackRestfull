@@ -35,6 +35,9 @@ export const AuthProvider = ({ children }) => {
         setLoading(true)
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('ticketOrders')
+        localStorage.removeItem('productOrders')
+        localStorage.removeItem('userData')
         setIsLoggedIn(false);
         setUser(null);
         setLoading(false)

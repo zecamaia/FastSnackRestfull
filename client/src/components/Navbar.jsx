@@ -6,7 +6,7 @@ import { PiShoppingCartThin } from 'react-icons/pi'
 import { Link } from 'react-router-dom';
 import { IoIosLogOut } from 'react-icons/io';
 import ResponsiveMenu from './ResponsiveMenu';
-
+import { useTicketOrderContext } from '../context/TicketOrderContext';
 export const filterMenuItens = (menuItems, isLoggedIn) => {
     return menuItems.filter(item => {
         if (item.requireLogin && !isLoggedIn) {
@@ -21,6 +21,8 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
     const [open, setOpen] = useState(false);
 
     const filteredNavbarMenu = filterMenuItens(NavbarMenu, isLoggedIn);
+    const { ticketOrders, productOrders } = useTicketOrderContext();
+    const totalItems = [...ticketOrders, ...productOrders].reduce((acc, order) => acc + order.quantity, 0);
 
     return (
         <>
@@ -47,19 +49,30 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
                                         </Link>
                                     </li>
                                 );
-                            })
-                            }
+                            })}
                         </ul>
                     </div>
                     {/* Icons section */}
                     <div className='flex items-center gap-4'>
                         {isLoggedIn ? (
-                            <button
-                                className='items-center text-2xl hover:bg-primary hover:text-white rounded-full p-1 transition ease-in duration-300 hidden md:block'
-                                onClick={handleLogout}
-                            >
-                                <IoIosLogOut />
-                            </button>
+
+                            <div className='flex items-center '>
+                                <Link to="/checkout" className="relative text-2xl mr-3 items-center hover:bg-primary hover:text-white rounded-full p-1 transition ease-in duration-300 hidden md:block">
+                                    <PiShoppingCartThin />
+                                    {totalItems > 0 && (
+                                        <span className="absolute top-[-5px] right-[-10px] rounded-full bg-red-600 text-white text-xs px-2 py-1 ">
+                                            {totalItems}
+                                        </span>
+                                    )}
+                                </Link>
+                                <button
+                                    className='items-center text-2xl hover:bg-primary hover:text-white rounded-full p-1 transition ease-in duration-300 hidden md:block'
+                                    onClick={handleLogout}
+                                >
+                                    <IoIosLogOut />
+                                </button>
+
+                            </div>
                         ) : (
                             <div className='flex items-center'>
                                 <Link
@@ -69,8 +82,9 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
                                     to='/login'
                                     className='mx-3 bg-red-600 py-2 px-4 rounded-lg text-white  hover:bg-red-500 transition duration-300  hidden md:block ease-in-out shadow-md'>Login</Link>
                             </div>
-
                         )}
+
+                        {/* Carrinho de compras com ícone e contador */}
 
                     </div>
                     {/* Menu mobile section */}
@@ -78,10 +92,10 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
                         <MdMenu className='text-4xl' />
                     </div>
                 </div>
-            </nav >
+            </nav>
 
             {/* Mobile sidebar section */}
-            < ResponsiveMenu open={open} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+            <ResponsiveMenu open={open} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
         </>
 
     );
