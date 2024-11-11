@@ -27,6 +27,8 @@ module.exports = {
         allowNull: false,
         defaultValue: 'pendente'
       },
+
+      //TODO: QR CODE AQUI
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

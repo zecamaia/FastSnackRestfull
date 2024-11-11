@@ -4,7 +4,7 @@ const loginRequired = require('../middlewares/loginRequired');
 const router = express.Router();
 
 router.post('/', TicketController.createTicket);
-router.get('/', loginRequired, TicketController.getAllTickets);
+router.get('/', TicketController.getAllTickets);
 router.get('/:id', loginRequired, TicketController.getTicketById);
 router.put('/:id', TicketController.updateTicket);
 router.delete('/:id', loginRequired, TicketController.deleteTicket);

@@ -1,38 +1,76 @@
-const { Product, Order, OrderProduct } = require('../../models');
-
+const { Product, Order, Ticket, OrderItem, Event } = require('../../models');
+const QRCode = require('qrcode');
 class OrderController {
     async createOrder(req, res) {
         try {
-            const { user_id, products } = req.body;
+            const { user_id, products, tickets } = req.body;
             let total = 0;
+
+            // Criar o pedido inicialmente sem o total
+            const order = await Order.create({ user_id, total: 0 });
+
+            // Adicionar os itens de produtos
             for (const product of products) {
                 const foundProduct = await Product.findByPk(product.product_id);
                 if (foundProduct) {
-                    total += foundProduct.price * product.quantity;
-                }
-            }
-            const order = await Order.create({ user_id, total });
-            for (const product of products) {
-                const foundProduct = await Product.findByPk(product.product_id);
-                if (foundProduct) {
-                    await OrderProduct.create({
+                    const itemTotalPrice = foundProduct.price * product.quantity;
+                    total += itemTotalPrice;
+
+                    // Criar o OrderItem para o produto
+                    await OrderItem.create({
                         order_id: order.id,
-                        product_id: product.product_id,
+                        product_id: foundProduct.id,
                         quantity: product.quantity,
                         unit_price: foundProduct.price
                     });
                 }
             }
 
-            return res.status(201).json({
-                status: 201,
-                message: "Pedido criado com sucesso.",
-                order: {
-                    id: order.id,
-                    user_id,
-                    total,
-                    products
+            for (const ticket of tickets) {
+                const foundTicket = await Ticket.findByPk(ticket.ticket_id);
+                if (foundTicket && foundTicket.available_quantity >= ticket.quantity) {
+                    const itemTotalPrice = foundTicket.price * ticket.quantity;
+                    total += itemTotalPrice;
+
+                    foundTicket.available_quantity -= ticket.quantity;
+                    await foundTicket.save();
+
+                    // Criar o OrderItem para o ingresso
+                    await OrderItem.create({
+                        order_id: order.id,
+                        ticket_id: foundTicket.id,
+                        quantity: ticket.quantity,
+                        unit_price: foundTicket.price
+                    });
+                } else {
+                    return res.status(400).json({ erro: "Quantidade insuficiente de ingressos" });
                 }
+            }
+
+            // Atualizar o total do pedido na tabela Orders
+            await order.update({ total });
+
+            const orderUrl = `http://localhost:3000/pedidos/${order.id}`;
+            await order.update({ qr_code_url: orderUrl });
+            QRCode.toDataURL(orderUrl, async (err, qrCodeUrl) => {
+                if (err) {
+                    console.error("Erro ao gerar QR Code", err);
+                    return res.status(500).json({ erro: "Erro ao gerar o QR cODE" });
+                }
+
+                return res.status(201).json({
+                    status: 201,
+                    message: "Pedido criado com sucesso.",
+                    order: {
+                        id: order.id,
+                        user_id,
+                        total,
+                        products,
+                        tickets,
+                        qrCodeUrl
+                    },
+                });
+
             });
 
         } catch (error) {
@@ -40,40 +78,92 @@ class OrderController {
             return res.status(500).json({ erro: "Erro ao criar o pedido" });
         }
     }
+
     async getAllOrders(req, res) {
         try {
-            const orders = await Order.findAll({
-                include: [{
-                    model: Product,
-                    as: 'products',
-                    through: OrderProduct
-                }]
-            });
-            res.status(200).json({ orders })
+            const orders = await Order.findAll();
+            res.status(200).json({ orders });
         } catch (error) {
-            console.error(error)
+            console.error(error);
             return res.status(500).json({ erro: "Erro ao listar os pedidos" });
         }
     }
-    async getOrderById(req, res) {
-        const { id } = req.params;
+
+    async getUserOrders(req, res) {
         try {
-            const order = await Order.findByPk(id, {
-                include: [{
-                    model: Product,
-                    through: OrderProduct,
-                    as: "products",
-                    required: false
-                }]
+            const { user_id } = req.params;
+            const orders = await Order.findAll({
+                where: { user_id },
+                include: [
+                    {
+                        model: OrderItem,
+                        as: 'orderItems',
+                        include: [
+                            {
+                                model: Product,
+                                as: 'product'
+                            },
+                            {
+                                model: Ticket,
+                                as: 'ticket',
+                                include: [
+                                    {
+                                        model: Event,
+                                        as: 'event'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                ]
             });
+
+            // Gerar o QR Code em base64 para cada pedido
+            for (const order of orders) {
+                const orderUrl = `http://localhost:3000/pedidos/${order.id}`;
+
+                await new Promise((resolve, reject) => {
+                    QRCode.toDataURL(orderUrl, (err, qrCodeUrlBase64) => {
+                        if (err) {
+                            console.error("Erro ao gerar QR Code", err);
+                            reject("Erro ao gerar o QR Code");
+                        } else {
+                            // Adicionar o QR Code em base64 ao pedido
+                            order.qrCodeUrlBase64 = qrCodeUrlBase64;
+                            resolve();
+                        }
+                    });
+                });
+            }
+
+            return res.status(200).json(orders);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ erro: "Erro ao listar os pedidos, Tente novamente" });
+        }
+    }
+
+
+    async getOrderById(req, res) {
+        try {
+            const order = await Order.findByPk(req.params.id);
+
 
             if (!order) {
                 return res.status(404).json({ erro: "Pedido não encontrado" });
             }
+            const orderUrl = `http://localhost:3000/pedidos/${order.id}`
+            QRCode.toDataURL(orderUrl, (err, qrCodeUrlBase64) => {
+                if (err) {
+                    console.error("Erro ao gerar o QR Code", err);
+                    return res.status(500).json({ erro: "Erro ao gerar QR Code" });
+                }
 
-            return res.status(200).json({
-                status: 200,
-                order
+                return res.status(200).json({
+                    status: 200,
+                    order,
+                    qrCodeUrlBase64
+                });
             });
         } catch (error) {
             console.error("Erro ao obter pedido", error);
@@ -86,18 +176,14 @@ class OrderController {
             if (!order) {
                 return res.status(404).json({ erro: "Pedido não encontrado" });
             }
-            const newData = order.update(req.body);
+            const updatedOrder = await order.update(req.body);
             res.status(200).json({
                 status: 200,
                 message: "Pedido atualizado com sucesso",
-                order: {
-                    id: order.id,
-                    user_id: order.user_id,
-                    status: order.status,
-                }
-            })
+                order: updatedOrder
+            });
         } catch (error) {
-            console.error("Erro ao ediar pedido", error);
+            console.error("Erro ao editar pedido", error);
             return res.status(500).json({ erro: "Erro ao editar pedido" });
         }
     }
@@ -108,7 +194,7 @@ class OrderController {
                 return res.status(404).json({ erro: "Pedido não encontrado" });
             }
             await order.destroy();
-            res.status(200).json({ message: "Deletado com sucesso." });
+            res.status(200).json({ message: "Pedido deletado com sucesso." });
         } catch (error) {
             console.error("Erro ao deletar pedido", error);
             return res.status(500).json({ erro: "Erro ao deletar pedido" });

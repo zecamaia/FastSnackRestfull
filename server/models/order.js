@@ -6,11 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
     static associate(models) {
       Order.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-      Order.belongsToMany(models.Product, {
-        through: models.OrderProduct,
-        foreignKey: 'order_id',
-        as: 'products'
-      });
+      Order.hasMany(models.OrderItem, { foreignKey: 'order_id', as: 'orderItems' });
     }
   }
   Order.init({
@@ -18,6 +14,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('pendente', 'pago', 'cancelado'),
       allowNull: false,
       defaultValue: 'pendente'
+    },
+    total: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      defaultValue: 0.00 // Valor padrão de 0, pode ser ajustado conforme necessário
+    },
+    qr_code_url: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     }
   }, {
     sequelize,

@@ -2,18 +2,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('orderTickets', {
+    await queryInterface.createTable('orderItems', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
+      order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users',
+          model: 'Orders',  // Referência para a tabela Orders
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      },
+      product_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,  // Permitido ser nulo, pois pode ser um ticket
+        references: {
+          model: 'Products',
           key: 'id'
         },
         onDelete: 'CASCADE',
@@ -21,7 +31,7 @@ module.exports = {
       },
       ticket_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,  // Permitido ser nulo, pois pode ser um produto
         references: {
           model: 'Tickets',
           key: 'id'
@@ -34,8 +44,9 @@ module.exports = {
         allowNull: false,
         defaultValue: 1
       },
-      status: {
-        type: Sequelize.ENUM('')
+      unit_price: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -48,6 +59,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('orderTickets');
+    await queryInterface.dropTable('orderItems');
   }
 };
