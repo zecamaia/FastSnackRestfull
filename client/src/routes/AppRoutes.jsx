@@ -1,15 +1,15 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "../pages/Home";
-import Registro from "../pages/Registro/Registro";
-import Login from "../pages/Login/Login";
-import Layout from "../layout/Layout";
-import ProtectedRoute from "./ProtectedRoute";
-import Evento from "../pages/Guest/Evento";
-import EventCategory from "../pages/Guest/CategoriaEvento";
-import EventInfo from "../pages/Guest/EventoInfo";
 import { TicketOrderProvider } from "../context/TicketOrderContext";
+import Layout from "../layout/Layout";
+import EventCategory from "../pages/Guest/CategoriaEvento";
+import Evento from "../pages/Guest/Evento";
+import EventInfo from "../pages/Guest/EventoInfo";
+import Orders from "../pages/Guest/Pedidos";
+import Home from "../pages/Home";
+import Login from "../pages/Login/Login";
+import Registro from "../pages/Registro/Registro";
 import TicketCheckout from "../pages/TicketCheckout";
-import Ingresso from "../pages/Guest/Ingresso";
+import ProtectedRoute from "./ProtectedRoute";
 
 const AppRoutes = () => {
     return (
@@ -25,8 +25,8 @@ const AppRoutes = () => {
                     <Route path="/eventos" element={<ProtectedRoute element={<Evento />} />} />
                     <Route path="/eventos/categoria/:id" element={<ProtectedRoute element={<EventCategory />} />} />
                     <Route path="/eventos/:id" element={<ProtectedRoute element={<EventInfo />} />} />
-                    <Route path="/checkout/ingresso" element={<ProtectedRoute element={<TicketCheckout />} />} />
-                    <Route path="/ingressos/" element={<ProtectedRoute element={<Ingresso />} />} />
+                    <Route path="/checkout/" element={<ProtectedRoute element={<TicketCheckout />} />} />
+                    <Route path="/pedidos/" element={<ProtectedRoute element={<Orders />} />} />
                 </Route>
             </Routes>
         </TicketOrderProvider>

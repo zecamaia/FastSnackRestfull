@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../../services/axios';
 import { showErrorAlert } from '../../components/Dialog';
 import { format } from 'date-fns';
 import { useTicketOrderContext } from '../../context/TicketOrderContext';
 
 const EventInfo = () => {
-
     const { id } = useParams();
     const [event, setEvent] = useState({});
     const [tickets, setTickets] = useState([]);
@@ -15,35 +14,35 @@ const EventInfo = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
-    const { addTicketOrder } = useTicketOrderContext();
+    const { addTicketOrder, addProductToCart } = useTicketOrderContext(); // Adicionar função para produtos
 
     useEffect(() => {
         const fetchEventById = async () => {
-            setIsLoading(true)
+            setIsLoading(true);
             try {
                 const response = await api.get(`/api/eventos/${id}`);
-                setEvent(response.data.event)
-                setTickets(response.data.event.ticket)
+                setEvent(response.data.event);
+                setTickets(response.data.event.ticket);
                 const initialQuantities = {};
                 response.data.event.ticket.forEach(ticket => {
                     initialQuantities[ticket.id] = 0;
                 });
                 setQuantities(initialQuantities);
-
             } catch (error) {
-                showErrorAlert("Erro ao buscar o evento")
+                showErrorAlert("Erro ao buscar o evento");
             } finally {
-                setIsLoading(false)
+                setIsLoading(false);
             }
-        }
+        };
 
         const fetchCategoriesAndProducts = async () => {
-            const response = await api.get(`/api/categorias/evento/${id}`)
+            const response = await api.get(`/api/categorias/evento/${id}`);
             setCategories(response.data);
-        }
-        fetchCategoriesAndProducts()
+        };
+
+        fetchCategoriesAndProducts();
         fetchEventById();
-    }, [id])
+    }, [id]);
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(Number(event.target.value));
@@ -57,24 +56,33 @@ const EventInfo = () => {
     };
 
     const handleBuyTickets = (ticketId) => {
-        const selectedTicket = tickets.find(ticket => ticket.id === ticketId)
+        const selectedTicket = tickets.find(ticket => ticket.id === ticketId);
         const quantity = quantities[ticketId];
 
         if (quantity > 0) {
             const orderTicket = {
                 ticket_id: selectedTicket.id,
                 quantity: quantity,
-                price: selectedTicket.price
-            }
+                price: selectedTicket.price,
+            };
             addTicketOrder(orderTicket);
-            navigate('/checkout/ingresso');
         } else {
             showErrorAlert("Selecione pelo menos um ingresso");
         }
-    }
+    };
+
+    const handleAddProductToCart = (product) => {
+        const orderProduct = {
+            product_id: product.id,
+            quantity: 1, // A quantidade pode ser alterada conforme a lógica que você preferir
+            price: product.price,
+        };
+        addProductToCart(orderProduct);
+    };
 
     return (
         <div>
+            {/* Header */}
             <div className="relative w-full bg-cover bg-center h-[400px] md:h-[600px]"
                 style={{ backgroundImage: `url(${event.image})` }}>
                 <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -91,7 +99,7 @@ const EventInfo = () => {
                     <p className="text-gray-600">Local: {event.location}</p>
                 </div>
 
-                {/* Segunda coluna (Produtos) */}
+                {/* Segunda coluna (Ingressos) */}
                 <div className="bg-white rounded-lg shadow-lg p-4">
                     <h3 className="text-lg font-bold mb-2">Escolha seus ingressos:</h3>
                     <div className="bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -102,9 +110,9 @@ const EventInfo = () => {
                                     <p className="text-sm text-red-600">R${ticket.price.toFixed(2)}</p>
                                     <p className="text-xs text-gray-600">Disponível: {ticket.available_quantity}</p>
                                 </div>
-                                <div className="flex items-center">
+                                <div className="flex items-center space-x-2">
                                     <button
-                                        className="px-2 py-1 bg-gray-300 text-gray-700 rounded-l"
+                                        className="px-2 py-1 text-sm bg-gray-100 text-gray-700 border border-gray-300 rounded hover:bg-gray-200 transition"
                                         onClick={() => handleQuantityChange(ticket.id, -1)}
                                     >
                                         -
@@ -112,20 +120,20 @@ const EventInfo = () => {
                                     <input
                                         type="number"
                                         value={quantities[ticket.id]}
-                                        className="w-12 text-center border rounded"
+                                        className="w-10 text-center border border-gray-300 rounded focus:outline-none"
                                         readOnly
                                     />
                                     <button
-                                        className="px-2 py-1 bg-gray-300 text-gray-700 rounded-r"
+                                        className="px-2 py-1 text-sm bg-gray-100 text-gray-700 border border-gray-300 rounded hover:bg-gray-200 transition"
                                         onClick={() => handleQuantityChange(ticket.id, 1)}
                                     >
                                         +
                                     </button>
                                     <button
-                                        className="ml-4 px-2 py-1 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-500 transition duration-300"
+                                        className="ml-2 px-3 py-1 bg-primary text-white text-sm font-semibold rounded hover:bg-red-500 transition duration-300"
                                         onClick={() => handleBuyTickets(ticket.id)}
                                     >
-                                        Comprar
+                                        Adicionar
                                     </button>
                                 </div>
                             </div>
@@ -134,6 +142,7 @@ const EventInfo = () => {
                 </div>
             </div>
 
+            {/* Categorias de Produtos */}
             <div className="max-w-screen-lg mx-auto p-4 mt-8 mb-16 md:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                     <h3 className="text-2xl font-bold mb-4 text-center">Categorias do Evento:</h3>
@@ -145,11 +154,11 @@ const EventInfo = () => {
                             id="categorySelect"
                             value={selectedCategory || ''}
                             onChange={handleCategoryChange}
-                            className="w-full mt-2 p-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-gray-700 focus:outline-none "
+                            className="w-full mt-2 p-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-gray-700 focus:outline-none"
                         >
                             <option value="" disabled>Selecione uma categoria</option>
                             {categories.map((category) => (
-                                <option key={category.id} value={category.id} className='bg-gray-100 hover:bg-gray-200 hover:text-gray-800'>
+                                <option key={category.id} value={category.id} className="bg-gray-100 hover:bg-gray-200 hover:text-gray-800">
                                     {category.name}
                                 </option>
                             ))}
@@ -164,9 +173,18 @@ const EventInfo = () => {
                                 {categories
                                     .find(category => category.id === selectedCategory)
                                     ?.produto.map((product) => (
-                                        <div key={product.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                        <div key={product.id} className="bg-white p-4 rounded-lg shadow-sm">
                                             <p className="text-sm font-semibold">{product.name}</p>
                                             <p className="text-sm text-red-600">R${product.price.toFixed(2)}</p>
+                                            <button
+                                                className="mt-2 bg-primary text-white py-1 px-2 rounded-lg w-full md:w-auto flex items-center justify-center space-x-2 hover:bg-red-500 transition-colors duration-300"
+                                                onClick={() => handleAddProductToCart(product)}
+                                            >
+                                                <span>Adicionar</span>
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+                                                </svg>
+                                            </button>
                                         </div>
                                     ))}
                             </div>
@@ -177,9 +195,7 @@ const EventInfo = () => {
                 </div>
             </div>
         </div>
-
-
     );
-}
+};
 
 export default EventInfo;

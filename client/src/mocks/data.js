@@ -11,13 +11,9 @@ export const NavbarMenu = [
     },
     {
         id: 3,
-        title: "Ingressos",
-        link: "/ingressos",
-    },
-    {
-        id: 4,
         title: "Meus pedidos",
         link: "/pedidos",
         requireLogin: true
-    }
+    },
+
 ];
