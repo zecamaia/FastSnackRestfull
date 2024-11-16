@@ -9,9 +9,6 @@ import { showConfirmAlert, showErrorAlert } from '../components/Dialog';
 import Navbar from '../components/Navbar';
 import EventCard from '../components/Cards/EventCard';
 
-
-// TODO: ADICIONAR UM BOTAO DE CRIE SEU EVENTO (PARA PRODUTORES)
-
 const Home = () => {
 
   const { logout, isLoggedIn, loading } = useAuth();

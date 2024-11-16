@@ -1,7 +1,7 @@
 import { IoMdClose } from "react-icons/io";
 import { IoTicketOutline } from "react-icons/io5";
 import { IoPizzaSharp } from 'react-icons/io5';
-
+import { QRCodeCanvas } from "qrcode.react";
 
 const Modal = ({ isOpen, onClose, order }) => {
   if (!isOpen || !onClose) return null;
@@ -17,27 +17,40 @@ const Modal = ({ isOpen, onClose, order }) => {
         <div className="p-4 border-b">
           <h1 className="text-xl font-medium text-gray-900">Pedido #{order.id}</h1>
         </div>
-        <div className="p-4 overflow-y-auto h-full">
+        <div className="p-4 overflow-y-auto h-full flex flex-col">
+          <div className="flex justify-between">
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600">
+                Status:
+                <span
+                  className={`px-2 py-1 rounded-md text-sm font-semibold ${order.status === 'pendente'
+                    ? 'text-yellow-700 bg-yellow-100'
+                    : order.status === 'cancelado'
+                      ? 'text-red-600 bg-red-100'
+                      : order.status === 'pago'
+                        ? 'text-green-600 bg-green-100'
+                        : ''
+                    }`}
+                >
+                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                </span>
+              </p>
+              <p className="text-sm text-gray-600 my-2">
+                Total: <span className="font-semibold text-gray-800">R$ {order.total}</span>
+              </p>
+            </div>
+            <div>
+              {order.qr_code_url && (
+                <QRCodeCanvas
+                  value={order.qr_code_url} // URL do QR Code
+                  size={80} // Reduzindo o tamanho do QR Code
+                  level="H" // Nível de correção de erro
+                />
+              )}
+            </div>
+          </div>
 
 
-          <p className="text-sm text-gray-600">
-            Status:
-            <span
-              className={`px-2 py-1 rounded-md text-sm font-semibold ${order.status === 'pendente'
-                ? 'text-yellow-700 bg-yellow-100'
-                : order.status === 'cancelado'
-                  ? 'text-red-600 bg-red-100'
-                  : order.status === 'pago'
-                    ? 'text-green-600 bg-green-100'
-                    : ''
-                }`}
-            >
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-            </span>
-          </p>
-          <p className="text-sm text-gray-600 my-2">
-            Total: <span className="font-semibold text-gray-800">R$ {order.total}</span>
-          </p>
 
           {order.orderItems && order.orderItems.length > 0 && (
             <div>
@@ -85,16 +98,6 @@ const Modal = ({ isOpen, onClose, order }) => {
             </div>
           )}
         </div>
-        {order.qrCodeBase64 && (
-          <div className="mt-4 text-center">
-            <h3 className="text-lg font-medium text-gray-900">QR Code do Pedido</h3>
-            <img
-              src={order.qrCodeBase64}
-              alt="QR Code do Pedido"
-              className="mx-auto mt-2 w-32 h-32"
-            />
-          </div>
-        )}
       </div>
     </div >
   );

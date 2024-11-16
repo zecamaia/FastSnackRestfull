@@ -29,11 +29,13 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
             <nav className='bg-gray-100 fixed top-0 left-0 right-0 z-10'>
                 <div className="container flex justify-between items-center  ">
                     {/* Logo section */}
-                    <div className='text-2xl flex items-center gap-2 font-bold py-8 '>
-                        <IoFastFood />
-                        <p>Fast</p>
-                        <p className='text-primary'>Snack</p>
-                    </div>
+                    <Link to="/">
+                        <div className='text-2xl flex items-center gap-2 font-bold py-8 '>
+                            <IoFastFood />
+                            <p>Fast</p>
+                            <p className='text-primary'>Snack</p>
+                        </div></Link>
+
                     {/* Menu section */}
                     <div className='hidden md:block '>
                         <ul className='flex items-center gap-6 text-gray-600'>

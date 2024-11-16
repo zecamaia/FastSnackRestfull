@@ -30,14 +30,20 @@ const Evento = () => {
         fetchCategories();
     }, []);
     return (
-        <div className="max-w-screen-lg mx-auto p-4 mt-36">
-            <h2 className="text-3xl text-primary font-bold text-center sm:text-3xl md:text-3xl">Os melhores eventos você encontra aqui!</h2>
-            <Categories categories={categories} />
-            <Slider />
-            <ListEvents events={events} />
+        <div>
+            <div className="max-w-screen-lg mx-auto p-4 mt-36">
+                <h2 className="text-3xl text-primary font-bold text-center sm:text-3xl md:text-3xl">Os melhores eventos você encontra aqui!</h2>
+                <Categories categories={categories} />
+            </div>
+
+            <div className="w-full">
+                <Slider />
+            </div>
+
+            <div className="max-w-screen-lg mx-auto p-4">
+                <ListEvents events={events} />
+            </div>
         </div>
-
-
     )
 
 }
