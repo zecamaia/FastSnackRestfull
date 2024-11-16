@@ -14,7 +14,7 @@ const EventInfo = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
-    const { addTicketOrder, addProductToCart } = useTicketOrderContext(); // Adicionar função para produtos
+    const { addTicketOrder, addProductToCart } = useTicketOrderContext();
 
     useEffect(() => {
         const fetchEventById = async () => {
@@ -75,7 +75,7 @@ const EventInfo = () => {
     const handleAddProductToCart = (product) => {
         const orderProduct = {
             product_id: product.id,
-            quantity: 1, // A quantidade pode ser alterada conforme a lógica que você preferir
+            quantity: 1,
             price: product.price,
             name: product.name
         };
