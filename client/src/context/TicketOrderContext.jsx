@@ -40,7 +40,7 @@ export const TicketOrderProvider = ({ children }) => {
                 );
             } else {
                 // Se for um novo ingresso, adiciona ao estado
-                return [...prevOrders, newTicket];
+                return [...prevOrders, { ...newTicket }];
             }
         });
     };
@@ -66,7 +66,7 @@ export const TicketOrderProvider = ({ children }) => {
                 );
             } else {
                 // Se for um novo produto, adiciona ao estado
-                return [...prevOrders, newProduct];
+                return [...prevOrders, { ...newProduct }];
             }
         });
     };
