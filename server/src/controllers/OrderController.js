@@ -1,5 +1,9 @@
+const { where } = require('sequelize');
 const { Product, Order, Ticket, OrderItem, Event } = require('../../models');
 const QRCode = require('qrcode');
+
+const stripe = require('stripe')('sk_test_51QL2V2E048WBTF5AJrojLfbxYEZyWTM0KZyQumWgDhKRjsYHAHhFMJ0veli0KYZ5xWjbRit4cLcSo3vQWBlKzfAz00wrqgxcJZ');
+
 class OrderController {
     async createOrder(req, res) {
         try {
@@ -185,6 +189,27 @@ class OrderController {
         } catch (error) {
             console.error("Erro ao editar pedido", error);
             return res.status(500).json({ erro: "Erro ao editar pedido" });
+        }
+    }
+    async confirmOrderPayment(req, res) {
+        try {
+            const { sessionId } = req.body;
+            const session = await stripe.checkout.sessions.retrieve(sessionId);
+            const orderId = session.metadata?.orderId;
+            console.log("orderId: ", orderId)
+            if (!orderId) {
+                return res.status(400).json({ message: "Order ID não encontrado na metadata" });
+            }
+
+            if (session.payment_status === 'paid') {
+                await Order.update({ status: 'pago' }, { where: { id: orderId } });
+                return res.status(200).json({ message: "Pagamento confirmado com sucesso" });
+            } else {
+                return res.status(400).json({ message: "Pagamento não efetuado" });
+            }
+        } catch (error) {
+            console.error("Erro ao confirmar pagamento:", error);
+            return res.status(500).json({ erro: "Erro ao confirmar pagamento" });
         }
     }
     async deleteOrder(req, res) {

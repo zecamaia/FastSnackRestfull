@@ -9,6 +9,8 @@ const categoryRoutes = require('./src/routes/categoryRoutes');
 const ticketRoutes = require('./src/routes/ticketRoutes');
 const orderRoutes = require('./src/routes/orderRoutes');
 const eventCategoryRoutes = require('./src/routes/eventCategoryRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -22,4 +24,5 @@ app.use('/api/categorias/', categoryRoutes);
 app.use('/api/ingressos/', ticketRoutes);
 app.use('/api/pedidos/', orderRoutes);
 app.use('/api/categoria-eventos', eventCategoryRoutes);
+app.use('/api/gerar-pagamento', paymentRoutes)
 module.exports = app;
