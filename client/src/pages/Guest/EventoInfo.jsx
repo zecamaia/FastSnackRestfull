@@ -64,6 +64,7 @@ const EventInfo = () => {
                 ticket_id: selectedTicket.id,
                 quantity: quantity,
                 price: selectedTicket.price,
+                name: selectedTicket.ticket_type
             };
             addTicketOrder(orderTicket);
         } else {
@@ -76,6 +77,7 @@ const EventInfo = () => {
             product_id: product.id,
             quantity: 1, // A quantidade pode ser alterada conforme a lógica que você preferir
             price: product.price,
+            name: product.name
         };
         addProductToCart(orderProduct);
     };

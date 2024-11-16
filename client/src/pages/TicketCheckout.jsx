@@ -4,18 +4,21 @@ import { useTicketOrderContext } from '../context/TicketOrderContext';
 import { showSuccesAlert, showErrorAlert, showValidationAlert } from '../components/Dialog';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/axios';
+import { loadStripe } from '@stripe/stripe-js';
 
 const TicketCheckout = () => {
     const { ticketOrders, productOrders, removeProductFromCart, removeTicketOrder } = useTicketOrderContext();
     const [isProcessing, setIsProcessing] = useState(false);
     const [isOrderEmpty, setIsOrderEmpty] = useState(false);
-    const navigate = useNavigate();
     const userId = JSON.parse(localStorage.getItem('user'));
+    const stripePromise = loadStripe("pk_test_51QL2V2E048WBTF5AUTSM8uzXxiNf9wnlHMShByq5Ez5ICgRtTVJyMWs6wTwaxoHioUDrCUxyC60xtqZ0tpVE0RKv00oXfUh5td")
 
     const ticketSubtotal = ticketOrders.reduce((total, ticket) => total + ticket.price * ticket.quantity, 0);
     const productSubtotal = productOrders.reduce((total, product) => total + product.price * product.quantity, 0);
     const totalAmount = ticketSubtotal + productSubtotal;
 
+    console.log("Ticket prices:", ticketOrders.map(ticket => ticket.price));
+    console.log("Product prices:", productOrders.map(product => product.price));
     useEffect(() => {
         if (ticketOrders.length === 0 || productOrders.length === 0) {
             setIsOrderEmpty(true)
@@ -26,20 +29,20 @@ const TicketCheckout = () => {
 
     const handleConfirmOrder = async () => {
         setIsProcessing(true);
-
         try {
-
             const orderData = {
                 user_id: userId.id,
                 tickets: ticketOrders.map(ticket => ({
                     ticket_id: ticket.ticket_id,
                     quantity: ticket.quantity,
                     price: ticket.price,
+                    name: ticket.name
                 })),
                 products: productOrders.map(product => ({
                     product_id: product.product_id,
                     quantity: product.quantity,
                     price: product.price,
+                    name: product.name
                 }))
             };
             if (orderData.tickets.length === 0 && orderData.products.length === 0) {
@@ -47,17 +50,47 @@ const TicketCheckout = () => {
                 return;
             }
 
-            await api.post('/api/pedidos', orderData, {
+            const orderResponse = await api.post('/api/pedidos', orderData, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
             });
-
+            const orderId = orderResponse.data.order.id
+            const lineItems = [
+                ...(ticketOrders && ticketOrders.length > 0
+                    ? ticketOrders.map((ticket) => ({
+                        price_data: {
+                            currency: "brl",
+                            product_data: { name: ticket.name },
+                            unit_amount: Math.round(ticket.price * 100),
+                        },
+                        quantity: ticket.quantity,
+                    }))
+                    : []),
+                ...(productOrders && productOrders.length > 0
+                    ? productOrders.map((product) => ({
+                        price_data: {
+                            currency: "brl",
+                            product_data: { name: product.name },
+                            unit_amount: Math.round(product.price * 100),
+                        },
+                        quantity: product.quantity,
+                    }))
+                    : []),
+            ];
+            console.log(lineItems)
+            const checkoutResponse = await api.post('/api/gerar-pagamento', {
+                lineItems,
+                orderId,
+            });
+            const stripe = await stripePromise;
             ticketOrders.forEach(ticket => removeTicketOrder(ticket.ticket_id));
             productOrders.forEach(product => removeProductFromCart(product.product_id));
+            await stripe?.redirectToCheckout({ sessionId: checkoutResponse.data.id });
+
+
 
             showSuccesAlert("Pedido realizado com sucesso, finalize o pagamento");
-            navigate('/pagamento');
 
         } catch (error) {
             console.error("Erro ao processar a compra:", error);

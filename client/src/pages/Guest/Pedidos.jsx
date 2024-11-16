@@ -32,7 +32,7 @@ const Orders = () => {
                                         `px-2 py-1 rounded-md text-sm font-semibold
                                         ${order.status === 'pendente' ? 'text-yellow-700 bg-yellow-100' :
                                             order.status === 'cancelado' ? 'text-red-600 bg-red-100' :
-                                                order.status === 'confirmado' ? 'text-green-600 bg-green-100' : ''}`
+                                                order.status === 'pago' ? 'text-green-600 bg-green-100' : ''}`
                                     }>
                                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                                     </span>

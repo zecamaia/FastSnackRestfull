@@ -10,6 +10,7 @@ import Login from "../pages/Login/Login";
 import Registro from "../pages/Registro/Registro";
 import TicketCheckout from "../pages/TicketCheckout";
 import ProtectedRoute from "./ProtectedRoute";
+import PaymentSuccess from "../pages/PaymentSuccess";
 
 const AppRoutes = () => {
     return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
                     <Route path="/eventos/:id" element={<ProtectedRoute element={<EventInfo />} />} />
                     <Route path="/checkout/" element={<ProtectedRoute element={<TicketCheckout />} />} />
                     <Route path="/pedidos/" element={<ProtectedRoute element={<Orders />} />} />
+                    <Route path="/pagamento-sucesso" element={<ProtectedRoute element={<PaymentSuccess />} />} />
                 </Route>
             </Routes>
         </TicketOrderProvider>
